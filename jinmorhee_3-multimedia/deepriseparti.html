@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>DEEPRISE Part I</title>
+  
+  
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+
+      <link rel="stylesheet" href="./style.css">
+
+  
+</head>
+
+<body>
+
+  <head>
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,400i,700">
+  <link href="https://fonts.googleapis.com/css?family=Aref+Ruqaa" rel="stylesheet">
+</head>
+
+<body>
+  <div class="row card match-my-cols">
+    <div class="col-sm-8 main">
+    	<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/409341878?autoplay=1&loop=1&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+      
+      <div class="content">
+        <p class="blog-content">Due to the recent innovations and increased accessibility of Deep Learning (DL), there is an apparent paradigm shift in the field of architectural design to data driven design process. This emerging trend has paved the first steps toward the advent of AI-based architectural design. In this sense, we propose an experiment in exploring a canonical architectural typology known as high rise buildings. By training diverse forms of high rise buildings from major cities in the world, we will develop a new DL-integrated method of designing high rise buildings. At the end, this project will produce “Deeprise” as a system for exploring the latent space of existing high rise buildings and a new high rise building design as an example of the newly developed method.
+</p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_8.jpg">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Overall Process of Highrise Building Design method Using Generative Deep Learning Model, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+
+        
+        <p class="blog-content">We selected 31 cities in the world and focused on specific areas that have high-rise buildings: New York City, Chicago, Atlanta, Los Angeles, Miami, Philadelphia, Pittsburgh, Boston, Seattle, San Francisco, San Diego, Houston, Dallas, Baltimore, Detroit, Indianapolis, Denver, Vancouver, Toronto, London, Paris, Riyadh, Dubai, Abu Dhabi, Hongkong, Shanghai, Taipei, Bangkok, Singapore, Honolulu, Sydney. The 3D data of the buildings were extracted from OSM (Open Street Map). Within the dataset, we’ve isolated buildings taller than 75 meters as our definition of high rise buildings. The data collection resulted in a total of 4,956 high-rise buildings formatted as 3D OBJ models. In this research, all handling of 3D data took place in Rhinoceros 3D modeling software.<br>
+        Instead of using raw 3D data to train a model, we’ve developed a technique to represent each building as a set of 2D images. We did this by slicing and sampling 16 floors of each building. </p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_1.jpg">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Conversion of Building to Tensor by Slicing and Sampling, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+        
+        <p class="blog-content">Using the <a style ="color:#b30000" href="http://www.jinmorhee.net/jinmorhee_3-multimedia/DID_1.html">DID</a> method mentioned above, we generated 16 floor plans in the form of diagrammatic images. Each diagrammatic image has one channel and has the size of 256px, which tensor shape is: 1 x 256 x 256. Next we stacked the 16 floor plan diagrammatic images to represent a building’s feature and train a generative model that has convolutional layers. Practically each building in its 3D form was abstracted and represented as a stacked tensor and its shape is 16 x 256 x 256. The total tensor size for the entire dataset of 4596 buildings is 4596 x 16 x 256 x 256. We have named this as the Deeprise Dataset.</p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_2.jpg">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Highrise Dataset, Stacked Tensor, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+
+        
+        <p class="blog-content">In terms of the model selection for the project, our main challenge was in the trade off between blurry images and trained latent space. Nowadays due to the tremendous development of Generative Adversarial Networks (GAN), GAN can generate clean synthesized images but have less freedom to explore the latent space of the model; when new data is input, the latent vector cannot be preserved and the model must be recalculated to fit the new data. On the other hand, Variational Auto Encoder (VAE) usually generates blurry images but allows for more freedom to explore the latent space; since the latent space is fit to the entire given dataset, exploring the latent space does not require new fitting calculation. Due to these trade offs, we strove for VAE that can generate GAN quality images, and consequently selected IntroVAE (Huaibo Huang et al., “IntroVAE: Introspective Variational Autoencoders for Photographic Image Synthesis,” ArXiv:1807.06358 [Cs, Stat], October 27, 2018, http://arxiv.org/abs/1807.06358.) as the hybrid solution. This method is similar to typical VAE. The main difference compared with typical VAE is that total loss includes the loss between fake and predicted images. The architecture of the IntroVAE model is illustrated below:
+</p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_9.jpg">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Model of IntroVAE, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+       
+        
+        <p class="blog-content">On the onset of the training process, we tested a dataset that included actual height of buildings represented by background colors. This dataset has 3 channels (i.e. RGB) instead of 1. After training the model based on this dataset for 1300 epochs, we confirmed this dataset is not suitable for predicting reduced vectors. Based on the prediction results, color was difficult to learn (i.e. too random and noisy) because floor plan shape and height value did not have a strong relationship.
+</p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_10.gif">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Inference of Sampled Floor Boundary by Train Epoch, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+        
+        <p class="blog-content">The hidden dimension of the latent space was 10. In order to visualize the space, we projected the vector space with 10 dimensions to 2D vector space by using t-SNE algorithm. Because the distribution of the data in the projected space was poorly scattered, we have concluded that more training is necessary for better scattering of data in the latent space. Then, developed an application that can convert the inference results from the trained model into 3D shapes for interweaving this form synthesis with design process.</p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_11.gif">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Interface of DEEPRISE, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+       
+        <p class="blog-content">DEEPRISE application proposes 3 ways to apply this project in an actual design process of a high-rise building: Interpolation, Synthesis, and Random Exploration. We tested interpolation between 2 buildings via the Slerp (Spherical Linear Interpolation) method. As illustrated below, we are seeing promising results.
+</p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_3.gif">
+          <img class="article-img" src="imgs/deeprise_part1_12.jpg">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Interpolation Examples from DEEPRISE, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_6.jpg">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Design Application by nterpolation from DEEPRISE, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+
+        <p class="blog-content">The second way to generate a highrise building form is  synthesis. After selecting synthesis tab from drop down menu in initialization, users can see a high-rise form by changing parameter sliders. This function allows users to precisely control the shape of a highrise building. Finally, for designers inspiration, they can randomly generate a shape of deeprise. Deeprise provides not only the generation functions, but also the analysis function. If users select a building point from the cloud, status screen will show the form of the selected building. And they can have two different display mode:by clusters or cities. Same clusters means similar form of buildings.
+</p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_4.jpg">
+        </div>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/deeprise_part1_7.jpg">
+        </div>
+       <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">DEEPRISE Design Examples, Jinmo Rhee, 2020</p><p class="blog-content"> </p>
+       
+   </div>
+  </div>
+    
+    
+    <div class="col-sm-4 sidebar">
+      
+      <h4 class="featured"></h4>
+      
+      <div class="sidebar-posts">
+        <div class="single-post">
+          <p class="sidebar-post-title">DEEPRISE: PART I</p>
+          <p class="sidebar-post-excerpt">Architecture, Highrise, Building, Synthesis, Interpolation, VAE, Machine Learning, AI</p>
+          <p class="sidebar-post-excerpt">Researched by Jinmo Rhee and Eddy Man Kim</p>
+          <p class="sidebar-post-excerpt">Developed by Jinmo Rhee</p>
+<p class="sidebar-post-excerpt">Designed by Jinmo Rhee<p>
+        </div>
+		<p><a class="author" href="http://www.jinmorhee.net">go back to work list</a></p>
+        
+
+
+        
+    </div>
+  </div>
+</body>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+
+  
+
+    <script  src="./script.js"></script>
+
+
+
+
+</body>
+
+</html>

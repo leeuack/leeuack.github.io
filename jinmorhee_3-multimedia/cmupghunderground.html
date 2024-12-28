@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Underground Plaza design using Diffusion Limited Aggregation</title>
+  
+  
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+
+      <link rel="stylesheet" href="./style.css">
+
+  
+</head>
+
+<body>
+
+  <head>
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,400i,700">
+  <link href="https://fonts.googleapis.com/css?family=Aref+Ruqaa" rel="stylesheet">
+</head>
+
+<body>
+  <div class="row card match-my-cols">
+    <div class="col-sm-8 main">
+    	<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/370092985?autoplay=1&loop=1&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+      
+      <div class="content">
+        <p class="blog-content">'Underground Plaza' project is the part of the 'Underground Campus of Carnegie Mellon University' project. The site is now filled with grass and landscaping, and is the center of the campus between buildings such as the Cohon University Centre, the CFA, the Hunt library, and the Drama School. The main concept of this space is 'floating'. It is not a space where many students or users stay long at a time, but constantly move, collide, and stay for a while. Therefore, the key to design is to properly distinguish user movements and facilities. The space consisting of a cafeteria, a cafeteria, an entrance of auditorium, and a study area should attract students without significantly conflicting with many students.
+Diffusion Limited Aggregation (DLA) algorithm was used to find proper path and design a plaza for student's daily life. Aggregated cell can be translated as path of user's circulation and non-aggregated cells can be translated as space for installing furnitures and ammenities.
+Changing the mall between Cohon University Center and School of Drama into a sloped entrance of underground campus, the undergound plaza is the main and central space of the whole campus. The function of this space is distribution of directions. This space can be called as lobby of the CMU campus.</p>
+        
+                <div class="article-img-section">
+          <img class="article-img" src="imgs/dla_01.jpg">
+        </div>
+		<p style="padding-top: 20px;" class="blog-content">CMU Underground Plaza, View from  North Entrance</p>
+        
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/dla_02.jpg">
+        </div>
+		<p style="padding-top: 20px;" class="blog-content">Masterplan of CMU Underground Campus</p>
+        
+<p class="blog-content">DLA used not only for the pattern of floor of underground plaza but also for the ceiling. Underground space can be defined by planning floor space and by planning light and space of ceiling. Planning ceiling is also related to the floor of the ground outside. Unlike the DLA for floor, DLA for ceiling needs more fragmented and less orthogonal conditions to creat a proper circulation on the ground. The cells not aggregated are used as skylight to define the plaza space.
+</p>
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/dla_03.jpg">
+        </div>
+		<p style="padding-top: 20px;" class="blog-content">CMU Underground Plaza, Perspective</p>
+        
+<p class="blog-content">Rule1 - Simple Aggregation<br>
+The blue cell means 'aggregated' status of a cell. In order to run DLA at least one aggregated cell is required at the initial step. The aggregated cell can have 8 Moore neighbors. These cells will be called as 'possible' status and represented yellow color. When one of theses neighboring cells got a conflict with agent cell, it will be aggregated and possible area will be merged and increased.
+</p>
+
+<p class="blog-content">Rule2 - Branch & Cluster Shape <br>
+When new aggregation happens, their could be conflict condition to define branch or cluster shape. If a conflicted cell has one other aggregated cell within its Moore neighbors, it means this rule could organize branch shape. Otherwise, the cell has more than one aggregated cell within its Moore neighbors, it means this rule could organize cluster shape. This rule can be cotrolled by probability.
+</p>
+
+<p class="blog-content">Rule3 - Orthogonal Shape <br>
+When new aggregation happens, their could be conflict condition to define orthogonal shape. If a conflicted cell does not have any other aggregated cell within its orthogonal neighbors (4 cells), it will organize non-orthogonal shape. Otherwise, it has more than one orthogonal neighbors, it will organize orthogonal shape.
+</p>
+
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/dla_05.jpg">
+        </div>
+		<p style="padding-top: 20px;" class="blog-content">Parameter 't' means number of iteration.<br>
+Parameter 'p' means how much the aggregation is cluster-shaped or branch-shaped. The higher p, the more brach-shaped.<br>
+Parameter 'o' means how much the aggregation is orthogonal. The higher o, the more orthogonal.</p>
+
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/dla_06.jpg">
+        </div>
+		<p style="padding-top: 20px;" class="blog-content">Different Patterns by Different Combinations of Probabilities</p>
+
+		<div class="article-img-section">
+          <img class="article-img" src="imgs/dla_07.jpg">
+        </div>
+		<p style="padding-top: 20px;" class="blog-content">Translation of DLA Pattern to PLAN</p>
+
+
+
+   </div>
+  </div>
+    
+    
+    <div class="col-sm-4 sidebar">
+      
+      <h4 class="featured"></h4>
+      
+      <div class="sidebar-posts">
+        <div class="single-post">
+          <p class="sidebar-post-title">UNDERGROUND PLAZA DESIGN USING DIFFUSION LIMITED AGGREGATION:<br>Carnegie Mellon University PGH Underground Campus</p>
+          <p class="sidebar-post-excerpt">DLA, Agent-based, Generative, CMU, PGH, Campus</p>
+          <p class="sidebar-post-excerpt">Researched by Jinmo Rhee, Yifei Wang</p>
+<p class="sidebar-post-excerpt">Designed by Jinmo Rhee<p>
+        </div>
+		<p><a class="author" href="http://www.jinmorhee.net">go back to work list</a></p>
+        
+		<p><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></p>
+		<img class="article-img" src="imgs/dla_04.jpg">
+               <p class="blog-content"> </p><p style="line-height:100%; font-family:Times New Roman; font-weight:bold; font-size:10px; text-align:center;">Diffusion Rules</p><p class="blog-content"> </p>
+
+        
+    </div>
+  </div>
+</body>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+
+  
+
+    <script  src="./script.js"></script>
+
+
+
+
+</body>
+
+</html>
