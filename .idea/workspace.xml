@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b48b5634-570a-4619-a628-70c6919c1ad9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,20 +21,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "true",
-    "last_opened_file_path": "X:/★이진모(leeuack)/건축/12.PhD/08.dissertation/04.works/10.prototype"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;X:/★이진모(leeuack)/건축/12.PhD/08.dissertation/04.works/10.prototype&quot;
   }
-}]]></component>
-  <component name="RunManager">
+}</component>
+  <component name="RunManager" selected="JavaScript Debug.index.html">
+    <configuration name="abli.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/leeuack.github.io/jinmorhee_3-multimedia/abli.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/leeuack.github.io/index.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
     <configuration name="scriptingandgendesF24.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/leeuack.github.io/jinmorhee_2-multiimage/scriptingandgendesF24.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.index.html" />
+        <item itemvalue="JavaScript Debug.abli.html" />
         <item itemvalue="JavaScript Debug.scriptingandgendesF24.html" />
       </list>
     </recent_temporary>
@@ -49,7 +55,10 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1755102573741</updated>
-      <workItem from="1755102576232" duration="1647000" />
+      <workItem from="1755102576232" duration="3252000" />
+      <workItem from="1756487966698" duration="2384000" />
+      <workItem from="1756494062790" duration="8000" />
+      <workItem from="1756746606550" duration="3753000" />
     </task>
     <servers />
   </component>
