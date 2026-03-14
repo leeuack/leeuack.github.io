@@ -26,11 +26,11 @@ jobs:
       # 3. Compile LaTeX to PDF (force past errors, matching Overleaf behavior)
       - name: Compile LaTeX
         uses: xu-cheng/latex-action@v3
+        continue-on-error: true
         with:
           root_file: main.tex
           working_directory: overleaf-cv
           args: -pdf -f -file-line-error -interaction=nonstopmode
-          continue_on_error: true
 
       # 4. Copy compiled PDF to repo root (try main.pdf, fallback to output.pdf)
       - name: Copy PDF
