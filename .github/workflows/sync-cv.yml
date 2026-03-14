@@ -18,15 +18,10 @@ jobs:
       - name: Checkout GitHub Pages repo
         uses: actions/checkout@v4
 
-      # 2. Clone Overleaf project via Git (using credential helper to avoid URL-encoding issues)
+      # 2. Clone Overleaf project via Git (token-based auth)
       - name: Clone Overleaf project
         run: |
-          git -c credential.helper='!f() { echo "username=$OVERLEAF_EMAIL"; echo "password=$OVERLEAF_PASSWORD"; }; f' \
-            clone https://git.overleaf.com/$OVERLEAF_PROJECT_ID overleaf-cv
-        env:
-          OVERLEAF_EMAIL: ${{ secrets.OVERLEAF_EMAIL }}
-          OVERLEAF_PASSWORD: ${{ secrets.OVERLEAF_PASSWORD }}
-          OVERLEAF_PROJECT_ID: ${{ secrets.OVERLEAF_PROJECT_ID }}
+          git clone https://git:${{ secrets.OVERLEAF_TOKEN }}@git.overleaf.com/${{ secrets.OVERLEAF_PROJECT_ID }} overleaf-cv
 
       # 3. Compile LaTeX to PDF
       - name: Compile LaTeX
