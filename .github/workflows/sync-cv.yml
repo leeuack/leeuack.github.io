@@ -1,0 +1,4 @@
+cd leeuack.github.io
+git add .github/workflows/sync-cv.yml
+git commit -m "Add Overleaf CV auto-sync workflow"
+git push
