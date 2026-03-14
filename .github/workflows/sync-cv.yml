@@ -18,10 +18,11 @@ jobs:
       - name: Checkout GitHub Pages repo
         uses: actions/checkout@v4
 
-      # 2. Clone Overleaf project via Git
+      # 2. Clone Overleaf project via Git (using credential helper to avoid URL-encoding issues)
       - name: Clone Overleaf project
         run: |
-          git clone https://${{ secrets.OVERLEAF_EMAIL }}:${{ secrets.OVERLEAF_PASSWORD }}@git.overleaf.com/${{ secrets.OVERLEAF_PROJECT_ID }} overleaf-cv
+          git -c credential.helper='!f() { echo "username=$OVERLEAF_EMAIL"; echo "password=$OVERLEAF_PASSWORD"; }; f' \
+            clone https://git.overleaf.com/$OVERLEAF_PROJECT_ID overleaf-cv
         env:
           OVERLEAF_EMAIL: ${{ secrets.OVERLEAF_EMAIL }}
           OVERLEAF_PASSWORD: ${{ secrets.OVERLEAF_PASSWORD }}
