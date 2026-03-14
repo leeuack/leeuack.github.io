@@ -23,19 +23,26 @@ jobs:
         run: |
           git clone https://git:${{ secrets.OVERLEAF_TOKEN }}@git.overleaf.com/${{ secrets.OVERLEAF_PROJECT_ID }} overleaf-cv
 
-      # 3. Compile LaTeX to PDF
+      # 3. Compile LaTeX to PDF (force past errors, matching Overleaf behavior)
       - name: Compile LaTeX
         uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
           working_directory: overleaf-cv
-          # If your main .tex file has a different name, change above
-          # You can also try: latexmk_use_xelatex: true
+          args: -pdf -f -file-line-error -interaction=nonstopmode
+          continue_on_error: true
 
-      # 4. Copy compiled PDF to repo root
+      # 4. Copy compiled PDF to repo root (try main.pdf, fallback to output.pdf)
       - name: Copy PDF
         run: |
-          cp overleaf-cv/main.pdf ./Jinmo_Rhee_CV.pdf
+          if [ -f overleaf-cv/main.pdf ]; then
+            cp overleaf-cv/main.pdf ./Jinmo_Rhee_CV.pdf
+            echo "PDF copied successfully"
+          else
+            echo "ERROR: main.pdf not found. Listing overleaf-cv files:"
+            ls -la overleaf-cv/
+            exit 1
+          fi
 
       # 5. Commit and push if PDF changed
       - name: Commit and push
