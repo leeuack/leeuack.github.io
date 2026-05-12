@@ -1,0 +1,61 @@
+# ─────────────────────────────────────────────
+#  Auto-sync CV from Overleaf → GitHub Pages
+#  Runs daily at 6 AM UTC and on manual trigger
+# ─────────────────────────────────────────────
+name: Sync CV from Overleaf
+
+on:
+  schedule:
+    - cron: '0 6 * * *'      # Daily at 6:00 AM UTC
+  workflow_dispatch:           # Manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  sync-cv:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout this repo (leeuack.github.io)
+      - name: Checkout GitHub Pages repo
+        uses: actions/checkout@v4
+
+      # 2. Clone Overleaf project via Git (token-based auth)
+      - name: Clone Overleaf project
+        run: |
+          git clone https://git:${{ secrets.OVERLEAF_TOKEN }}@git.overleaf.com/${{ secrets.OVERLEAF_PROJECT_ID }} overleaf-cv
+
+      # 3. Compile LaTeX to PDF (force past errors, matching Overleaf behavior)
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        continue-on-error: true
+        with:
+          root_file: main.tex
+          working_directory: overleaf-cv
+          args: -pdf -f -file-line-error -interaction=nonstopmode
+
+      # 4. Copy compiled PDF to repo root (try main.pdf, fallback to output.pdf)
+      - name: Copy PDF
+        run: |
+          if [ -f overleaf-cv/main.pdf ]; then
+            cp overleaf-cv/main.pdf ./Jinmo_Rhee_CV.pdf
+            echo "PDF copied successfully"
+          else
+            echo "ERROR: main.pdf not found. Listing overleaf-cv files:"
+            ls -la overleaf-cv/
+            exit 1
+          fi
+
+      # 5. Commit and push if PDF changed
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Jinmo_Rhee_CV.pdf
+          if git diff --cached --quiet; then
+            echo "No changes to CV"
+          else
+            git commit -m "Auto-update CV from Overleaf [$(date +%Y-%m-%d)]"
+            git push
+          fi
