@@ -257,6 +257,7 @@ const SS = {
       if (e.key === ' ' || e.key === 'p') this.togglePause();
       if (e.key === 'ArrowRight') this.skip(1);
       if (e.key === 'ArrowLeft') this.skip(-1);
+      if (e.key === 'f') this.requestFullscreen();
     });
 
     let tapCount = 0, tapTimer = null;
@@ -273,11 +274,20 @@ const SS = {
   async start() {
     this.els.start.classList.add('hidden');
     setTimeout(() => this.els.start.style.display = 'none', 600);
+    this.requestFullscreen();
     this.requestWakeLock();
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) this.requestWakeLock();
     });
     this.show(0);
+  },
+
+  requestFullscreen() {
+    const el = document.documentElement;
+    const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (rfs) {
+      try { rfs.call(el); } catch(e) {}
+    }
   },
 
   async requestWakeLock() {
