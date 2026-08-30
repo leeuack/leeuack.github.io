@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentFilter = 'all';
   let currentSearch = '';
   let savedHeaderPos = null;
+  const MOBILE_MQ = window.matchMedia('(max-width: 720px)');
+  function isMobileLayout() { return MOBILE_MQ.matches; }
 
   allFilterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -75,6 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function enterFilterMode() {
     const hdr = document.querySelector('.float-header');
     if (document.body.classList.contains('filter-active')) return; // already active
+
+    if (isMobileLayout()) {
+      const bp = document.getElementById('bioPanel');
+      if (bp && bp.classList.contains('open')) {
+        bp.classList.remove('open');
+        document.getElementById('newsTicker').classList.remove('hidden');
+      }
+      document.body.classList.add('filter-active');
+      return;
+    }
 
     resolveHeaderTransform();
     savedHeaderPos = {
@@ -106,6 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!document.body.classList.contains('filter-active')) return; // already default
 
     document.body.classList.remove('filter-active');
+
+    if (isMobileLayout()) {
+      savedHeaderPos = null;
+      return;
+    }
 
     // Restore header position
     setTimeout(() => {
@@ -411,7 +428,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dataEl) postData = JSON.parse(dataEl.textContent);
   } catch (e) { console.warn('No post data found'); }
 
-  function openModal(postId) {
+  function getPostIdFromUrl() {
+    const p = new URLSearchParams(window.location.search).get('p');
+    return (p && postData[p]) ? p : null;
+  }
+
+  function writePostUrl(postId, replace) {
+    const url = new URL(window.location.href);
+    if (postId) url.searchParams.set('p', postId);
+    else url.searchParams.delete('p');
+    const next = url.pathname + url.search + url.hash;
+    const state = { postId: postId || null };
+    if (replace) history.replaceState(state, '', next);
+    else history.pushState(state, '', next);
+  }
+
+  let modalPushed = false;
+
+  function openModal(postId, opts) {
     const data = postData[postId];
     if (!data) return;
     modalTag.textContent = isLab ? (data.tag_lab || data.tag || '') : (data.tag_personal || data.tag || '');
@@ -535,15 +569,37 @@ document.addEventListener('DOMContentLoaded', () => {
     modalOverlay.classList.add('open');
     modalContent.scrollTop = 0;
     document.body.style.overflow = 'hidden';
+
+    opts = opts || {};
+    if (!opts.fromHistory) {
+      const current = new URLSearchParams(window.location.search).get('p');
+      if (current !== postId) {
+        writePostUrl(postId, !!opts.replaceUrl);
+        modalPushed = !opts.replaceUrl;
+      }
+    }
   }
 
-  function closeModal() {
+  function hideModal() {
     modalOverlay.classList.remove('open');
     document.body.style.overflow = '';
-    // Stop all playing videos by removing iframes
     modalBody.querySelectorAll('iframe').forEach(iframe => {
       iframe.src = '';
     });
+  }
+
+  function closeModal() {
+    if (!modalOverlay.classList.contains('open')) return;
+    if (modalPushed && new URLSearchParams(window.location.search).get('p')) {
+      modalPushed = false;
+      history.back();
+      return;
+    }
+    hideModal();
+    if (new URLSearchParams(window.location.search).get('p')) {
+      writePostUrl(null, true);
+    }
+    modalPushed = false;
   }
 
   // Card click → open modal
@@ -572,6 +628,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && modalOverlay.classList.contains('open')) closeModal();
     if (e.key === 'Escape' && header.classList.contains('news-expanded')) collapseNews();
   });
+
+  window.addEventListener('popstate', () => {
+    modalPushed = false;
+    const id = getPostIdFromUrl();
+    if (id) openModal(id, { fromHistory: true });
+    else hideModal();
+  });
+
+  const initialPost = getPostIdFromUrl();
+  if (initialPost) openModal(initialPost, { fromHistory: true });
 
   // ═══════════════════════════════════════════
   //  EXPANDED NEWS VIEW (header grows to fill screen)
@@ -738,6 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════
 
   grid.addEventListener('wheel', (e) => {
+    if (isMobileLayout()) return;
     if (e.target.closest('.float-header')) return;
     e.preventDefault();
     // Support both vertical and horizontal wheel/trackpad
@@ -755,8 +822,23 @@ document.addEventListener('DOMContentLoaded', () => {
   let dragStartX, dragStartY;
   let headerStartX, headerStartY;
 
+  function clearHeaderInlinePos() {
+    header.style.top = '';
+    header.style.left = '';
+    header.style.right = '';
+    header.style.bottom = '';
+    header.style.width = '';
+    header.style.height = '';
+    header.style.maxWidth = '';
+    header.style.transform = '';
+    header.style.transition = '';
+    header.style.cursor = '';
+    delete header.dataset.resolved;
+  }
+
   // Convert transform-based centering to explicit top/left once
   function resolveHeaderTransform() {
+    if (isMobileLayout()) return;
     if (header.dataset.resolved) return;
     const rect = header.getBoundingClientRect();
     header.style.top = rect.top + 'px';
@@ -773,6 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setHeaderPos(x, y) {
+    if (isMobileLayout()) return;
     const w = header.offsetWidth;
     // Keep header within horizontal bounds
     x = Math.max(0, Math.min(window.innerWidth - w, x));
@@ -787,7 +870,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mouse
   header.addEventListener('mousedown', (e) => {
-    if (e.target.closest('a, button, input, .bio-text')) return;
+    if (isMobileLayout()) return;
+    if (e.target.closest('a, button, input, .bio-text, .news-bio-wrap')) return;
     resolveHeaderTransform(); // clear CSS centering transform on first drag
     isDragging = true;
     dragStartX = e.clientX;
@@ -814,7 +898,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Touch
   header.addEventListener('touchstart', (e) => {
-    if (e.target.closest('a, button, input, .bio-text')) return;
+    if (isMobileLayout()) return;
+    if (e.target.closest('a, button, input, .bio-text, .news-bio-wrap')) return;
     resolveHeaderTransform(); // clear CSS centering transform on first drag
     isDragging = true;
     const t = e.touches[0];
@@ -838,8 +923,19 @@ document.addEventListener('DOMContentLoaded', () => {
     header.style.transition = '';
   });
 
+  MOBILE_MQ.addEventListener('change', (e) => {
+    if (e.matches) {
+      isDragging = false;
+      clearHeaderInlinePos();
+    }
+  });
+
   // Keep in viewport on resize
   window.addEventListener('resize', () => {
+    if (isMobileLayout()) {
+      clearHeaderInlinePos();
+      return;
+    }
     if (header.dataset.resolved) {
       // Already using explicit positioning — re-clamp
       setHeaderPos(parseInt(header.style.left, 10) || 0, parseInt(header.style.top, 10) || 0);
