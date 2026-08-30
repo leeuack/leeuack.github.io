@@ -982,6 +982,10 @@ body.filter-active .card .card-img {
     -webkit-line-clamp: 3;
   }
 
+  .news-ticker-inner.animating {
+    transition: transform 0.35s ease;
+  }
+
   .grid-full {
     display: flex;
     flex-direction: column;

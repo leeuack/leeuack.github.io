@@ -260,7 +260,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── Auto-cycling news ticker (continuous scroll) with featured pinning ───
   const newsItems = Array.from(newsTicker.querySelectorAll('.news-item'));
-  const CYCLE_INTERVAL = 6000; // 6s pause between rolls
+  const CYCLE_INTERVAL_DESKTOP = 6000;
+  const CYCLE_INTERVAL_MOBILE = 3000;
+  function cycleInterval() {
+    return isMobileLayout() ? CYCLE_INTERVAL_MOBILE : CYCLE_INTERVAL_DESKTOP;
+  }
   let tickerInterval = null;
 
   // Separate featured from regular news
@@ -341,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         inner.addEventListener('transitionend', onEnd);
-      }, CYCLE_INTERVAL);
+      }, cycleInterval());
     }
   }
 
@@ -830,7 +834,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isAnim = false;
       };
       inner.addEventListener('transitionend', onEnd);
-    }, CYCLE_INTERVAL);
+    }, cycleInterval());
   }
 
   newsExpandBtn.addEventListener('click', (e) => {
