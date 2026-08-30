@@ -32,6 +32,9 @@ body {
   overflow: hidden;
 }
 
+html[data-mode="lab"] { background: #23297a; }
+html[data-mode="personal"] { background: #f9f9f9; }
+
 .mode-veil {
   position: fixed;
   inset: 0;

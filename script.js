@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── Mode Detection ───
   const siteMode = document.body.getAttribute('data-mode') || 'personal';
-  let isLab = siteMode === 'lab';
+  const isLab = siteMode === 'lab';
 
   // Show/hide mode-specific filter buttons
   document.querySelectorAll('.filter-personal').forEach(b => {
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Category attribute name depends on mode
-  let catAttr = isLab ? 'catLab' : 'catPersonal';
+  const catAttr = isLab ? 'catLab' : 'catPersonal';
 
   // ─── Filter & Search ───
   const filterBtns = document.querySelectorAll('.filter-btn:not([style*="display: none"])');
@@ -987,6 +987,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ═══════════════════════════════════════════
 
   function applyModeChrome(goingLab) {
+    document.documentElement.setAttribute('data-mode', goingLab ? 'lab' : 'personal');
+    document.documentElement.style.background = goingLab ? '#23297a' : '#f9f9f9';
     document.body.setAttribute('data-mode', goingLab ? 'lab' : 'personal');
     document.title = goingLab ? 'DESTECTIC Lab' : 'Jinmo Rhee';
     const nameEl = document.getElementById('siteName');
@@ -1010,21 +1012,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (goingLab) {
         link.textContent = 'Jinmo Rhee \u2192';
         link.className = 'mode-link personal-link';
-        link.href = 'https://jinmorhee.net';
       } else {
         link.textContent = 'DESTECTIC Lab \u2192';
         link.className = 'mode-link lab-link';
-        link.href = 'https://destectic.net';
-      }
-    }
-    const fav = document.getElementById('siteFavicon');
-    if (fav) {
-      if (goingLab) {
-        fav.type = 'image/png';
-        fav.href = 'imgs/destectic_ico.png';
-      } else {
-        fav.type = 'image/x-icon';
-        fav.href = 'favicon.ico';
       }
     }
 
@@ -1036,21 +1026,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function syncModeUrl(goingLab) {
-    const url = new URL(location.href);
-    const hostIsLab = location.hostname.indexOf('destectic') !== -1;
-    if (goingLab) {
-      if (hostIsLab) url.searchParams.delete('mode');
-      else url.searchParams.set('mode', 'lab');
-    } else if (hostIsLab) {
-      url.searchParams.set('mode', 'personal');
-    } else {
-      url.searchParams.delete('mode');
-    }
-    history.replaceState(null, '', url);
-  }
-
-  function playModeTransition(goingLab) {
+  function playModeTransition(destHref) {
+    const goingLab = /destectic/i.test(destHref);
     const oldRects = new Map();
     allCards.forEach(card => {
       if (!card.classList.contains('hidden')) {
@@ -1060,8 +1037,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.body.classList.add('mode-crossing', goingLab ? 'to-lab' : 'to-personal');
     applyModeChrome(goingLab);
-    isLab = goingLab;
-    catAttr = isLab ? 'catLab' : 'catPersonal';
 
     const staying = [];
     const appearing = [];
@@ -1136,17 +1111,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     setTimeout(() => {
-      leaving.forEach(card => {
-        card.classList.add('hidden');
-        card.style.cssText = '';
-      });
-      [...staying, ...appearing].forEach(card => {
-        card.style.transition = '';
-        card.style.opacity = '';
-        card.style.transform = '';
-      });
-      document.body.classList.remove('mode-crossing', 'to-lab', 'to-personal');
-      syncModeUrl(goingLab);
+      const destColor = goingLab ? '#23297a' : '#f9f9f9';
+      document.documentElement.style.background = destColor;
+      document.documentElement.setAttribute('data-mode', goingLab ? 'lab' : 'personal');
+      window.location.href = destHref;
     }, 780);
   }
 
@@ -1157,7 +1125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       if (document.body.classList.contains('mode-crossing')) return;
       if (typeof closeModal === 'function') closeModal();
-      playModeTransition(document.body.getAttribute('data-mode') !== 'lab');
+      playModeTransition(modeLink.href);
     });
   }
 
