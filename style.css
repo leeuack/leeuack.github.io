@@ -32,15 +32,6 @@ body {
   overflow: hidden;
 }
 
-/* Cross-site mode arrive: hold the destination wash until the page settles */
-html.mode-arrive-pending[data-arrive="lab"] { background: #23297a; }
-html.mode-arrive-pending[data-arrive="personal"] { background: #f9f9f9; }
-html.mode-arrive-pending body { opacity: 0; }
-html.mode-arrive-ready body {
-  opacity: 1;
-  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
 .mode-veil {
   position: fixed;
   inset: 0;
