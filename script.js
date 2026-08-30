@@ -302,8 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isAnimating = false;
 
-    // Only cycle if more than 1 regular item
-    if (regularHTML.length > 1) {
+    // Only cycle if more than 1 regular item (desktop overlay only)
+    if (regularHTML.length > 1 && !isMobileLayout()) {
       tickerInterval = setInterval(() => {
         if (isAnimating) return;
         const items = inner.querySelectorAll('.news-item');
@@ -760,7 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function restartTicker() {
     if (tickerInterval) clearInterval(tickerInterval);
-    if (regularHTML.length <= 1) return;
+    if (regularHTML.length <= 1 || isMobileLayout()) return;
 
     let newsIdx = regularHTML.length;
     let isAnim = false;

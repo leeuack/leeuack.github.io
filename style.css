@@ -965,6 +965,23 @@ body.filter-active .card .card-img {
     display: none;
   }
 
+  .news-img {
+    display: none;
+  }
+
+  .news-item--article {
+    gap: 0;
+    padding: 0.7rem 0;
+  }
+
+  .news-title {
+    font-size: 0.9rem;
+  }
+
+  .news-body {
+    -webkit-line-clamp: 3;
+  }
+
   .grid-full {
     display: flex;
     flex-direction: column;
