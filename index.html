@@ -10,6 +10,13 @@
     (function() {
       var isLab = (location.hostname.indexOf('destectic') !== -1)
         || (new URLSearchParams(location.search).get('mode') === 'lab');
+      try {
+        var arrive = sessionStorage.getItem('mode-arrive');
+        if (arrive === 'lab' || arrive === 'personal') {
+          document.documentElement.classList.add('mode-arrive-pending');
+          document.documentElement.setAttribute('data-arrive', arrive);
+        }
+      } catch (e) {}
       var fav = document.getElementById('siteFavicon');
       if (!fav) return;
       if (isLab) {
@@ -106,6 +113,8 @@
       </div>
     </div>
   </header>
+
+  <div class="mode-veil" id="modeVeil" aria-hidden="true"></div>
 
   <!-- ─── CARD GRID ─── -->
   <main class="grid-full" id="grid">

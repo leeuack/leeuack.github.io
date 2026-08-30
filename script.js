@@ -977,6 +977,158 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ═══════════════════════════════════════════
+  //  PERSONAL ↔ LAB MODE TRANSITION
+  // ═══════════════════════════════════════════
+
+  try {
+    if (sessionStorage.getItem('mode-arrive')) {
+      requestAnimationFrame(() => {
+        document.documentElement.classList.add('mode-arrive-ready');
+        setTimeout(() => {
+          document.documentElement.classList.remove('mode-arrive-pending', 'mode-arrive-ready');
+          document.documentElement.removeAttribute('data-arrive');
+          sessionStorage.removeItem('mode-arrive');
+        }, 480);
+      });
+    }
+  } catch (e) {}
+
+  function applyModeChrome(goingLab) {
+    document.body.setAttribute('data-mode', goingLab ? 'lab' : 'personal');
+    document.title = goingLab ? 'DESTECTIC Lab' : 'Jinmo Rhee';
+    const nameEl = document.getElementById('siteName');
+    const subEl = document.getElementById('siteSubtitle');
+    const bioBtn = document.getElementById('bioToggle');
+    const bioP = document.getElementById('bioPersonal');
+    const bioL = document.getElementById('bioLab');
+    const cv = document.querySelector('.nav-cv');
+    if (nameEl) nameEl.textContent = goingLab ? 'DESTECTIC' : 'Jinmo Rhee';
+    if (subEl) {
+      subEl.textContent = goingLab ? 'Design Technology & Tactics' : '';
+      subEl.style.display = goingLab ? 'block' : '';
+    }
+    if (bioBtn) bioBtn.textContent = goingLab ? 'About' : 'Bio';
+    if (bioP) bioP.style.display = goingLab ? 'none' : '';
+    if (bioL) bioL.style.display = goingLab ? 'block' : 'none';
+    if (cv) cv.style.display = goingLab ? 'none' : '';
+
+    const link = document.getElementById('modeLink');
+    if (link) {
+      if (goingLab) {
+        link.textContent = 'Jinmo Rhee \u2192';
+        link.className = 'mode-link personal-link';
+      } else {
+        link.textContent = 'DESTECTIC Lab \u2192';
+        link.className = 'mode-link lab-link';
+      }
+    }
+
+    document.querySelectorAll('.filter-personal').forEach(b => {
+      b.style.display = goingLab ? 'none' : '';
+    });
+    document.querySelectorAll('.filter-lab').forEach(b => {
+      b.style.display = goingLab ? '' : 'none';
+    });
+  }
+
+  function playModeTransition(destHref) {
+    const goingLab = /destectic/i.test(destHref);
+    const oldRects = new Map();
+    allCards.forEach(card => {
+      if (!card.classList.contains('hidden')) {
+        oldRects.set(card, card.getBoundingClientRect());
+      }
+    });
+
+    document.body.classList.add('mode-crossing', goingLab ? 'to-lab' : 'to-personal');
+    applyModeChrome(goingLab);
+
+    const staying = [];
+    const appearing = [];
+    const leaving = [];
+
+    allCards.forEach(card => {
+      const labOnly = card.hasAttribute('data-lab-only');
+      const personalOnly = card.hasAttribute('data-personal-only');
+      const shouldShow = goingLab ? !personalOnly : !labOnly;
+      const wasHidden = !oldRects.has(card);
+
+      if (shouldShow && wasHidden) appearing.push(card);
+      else if (!shouldShow && !wasHidden) leaving.push(card);
+      else if (shouldShow) staying.push(card);
+    });
+
+    leaving.forEach(card => {
+      card.style.transition = 'opacity 0.38s ease, transform 0.38s cubic-bezier(0.4, 0, 1, 1)';
+      card.style.opacity = '0';
+      card.style.transform = goingLab ? 'translateY(-10px) scale(0.97)' : 'translateY(10px) scale(0.97)';
+    });
+
+    appearing.forEach(card => {
+      card.classList.remove('hidden');
+      card.style.opacity = '0';
+      card.style.transform = goingLab ? 'translateY(18px) scale(0.96)' : 'translateY(-18px) scale(0.96)';
+    });
+
+    staying.forEach(card => {
+      card.classList.remove('hidden');
+    });
+
+    requestAnimationFrame(() => {
+      const newRects = new Map();
+      [...staying, ...appearing].forEach(card => {
+        newRects.set(card, card.getBoundingClientRect());
+      });
+
+      staying.forEach(card => {
+        const oldR = oldRects.get(card);
+        const newR = newRects.get(card);
+        if (!oldR || !newR) return;
+        const dx = oldR.left - newR.left;
+        const dy = oldR.top - newR.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+        card.style.transition = 'none';
+        card.style.transform = `translate(${dx}px, ${dy}px)`;
+        card.style.opacity = '1';
+      });
+
+      requestAnimationFrame(() => {
+        staying.forEach(card => {
+          card.style.transition = 'transform 0.72s cubic-bezier(0.22, 1, 0.36, 1)';
+          card.style.transform = '';
+        });
+        appearing.forEach((card, i) => {
+          card.style.transition = `opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${40 + i * 18}ms, transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) ${40 + i * 18}ms`;
+          card.style.opacity = '1';
+          card.style.transform = '';
+        });
+      });
+    });
+
+    setTimeout(() => {
+      leaving.forEach(card => {
+        card.classList.add('hidden');
+        card.style.transition = '';
+        card.style.opacity = '';
+        card.style.transform = '';
+      });
+      try { sessionStorage.setItem('mode-arrive', goingLab ? 'lab' : 'personal'); } catch (e) {}
+      window.location.href = destHref;
+    }, 820);
+  }
+
+  const modeLink = document.getElementById('modeLink');
+  if (modeLink) {
+    modeLink.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      if (document.body.classList.contains('mode-crossing')) return;
+      if (typeof closeModal === 'function') closeModal();
+      playModeTransition(modeLink.href);
+    });
+  }
+
   // Keep in viewport on resize
   window.addEventListener('resize', () => {
     if (isMobileLayout()) {
