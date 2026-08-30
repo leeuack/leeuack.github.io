@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Returns to default (news visible, centered) ONLY when "News" tab is clicked.
   function enterFilterMode() {
     const hdr = document.querySelector('.float-header');
+    if (hdr && hdr.classList.contains('news-expanded')) collapseNewsImmediate();
     if (document.body.classList.contains('filter-active')) return; // already active
 
     if (isMobileLayout()) {
@@ -371,22 +372,29 @@ document.addEventListener('DOMContentLoaded', () => {
   // Default state: News is visible
   newsToggle.classList.add('active');
 
-  // ─── News toggle → return to default state ───
-  newsToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
+  function activateAllView() {
+    allFilterBtns.forEach(b => b.classList.remove('active'));
+    allFilterBtns.forEach(b => { if (b.dataset.filter === 'all') b.classList.add('active'); });
+    currentFilter = 'all';
+    applyFilters();
+    enterFilterMode();
+  }
 
-    // Reset filter to 'all' and clear search
+  function returnToNewsView() {
     currentFilter = 'all';
     currentSearch = '';
     searchInput.value = '';
     filterBtns.forEach(b => b.classList.remove('active'));
-    // Activate the "All" filter button visually
     filterBtns.forEach(b => { if (b.dataset.filter === 'all') b.classList.add('active'); });
     applyFilters();
-
-    // Leave filter-active mode (restore center position, show news)
     leaveFilterMode();
     showNews();
+  }
+
+  // ─── News toggle → return to default state ───
+  newsToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    returnToNewsView();
   });
 
   // ─── Bio toggle ───
@@ -625,8 +633,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === modalOverlay) closeModal();
   });
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalOverlay.classList.contains('open')) closeModal();
-    if (e.key === 'Escape' && header.classList.contains('news-expanded')) collapseNews();
+    if (e.key !== 'Escape') return;
+    if (modalOverlay.classList.contains('open')) {
+      closeModal();
+      return;
+    }
+    if (document.body.classList.contains('filter-active')) {
+      returnToNewsView();
+    } else {
+      activateAllView();
+    }
   });
 
   window.addEventListener('popstate', () => {
@@ -688,6 +704,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Change button icon to collapse (↙)
     newsExpandBtn.innerHTML = '&#x2199;';
     newsExpandBtn.title = 'Collapse news';
+  }
+
+  function collapseNewsImmediate() {
+    if (!header.classList.contains('news-expanded')) return;
+    newsExpandBtn.innerHTML = '&#x2197;';
+    newsExpandBtn.title = 'Expand news';
+    header.classList.remove('news-expanded');
+    header.style.maxWidth = '';
+    header.style.width = '';
+    header.style.height = '';
+    header.style.overflow = '';
+    header.style.transition = '';
+    if (preExpandPos) {
+      setHeaderPos(preExpandPos.x, preExpandPos.y);
+      preExpandPos = null;
+    }
+    const featWrap = newsTicker.querySelector('.news-featured-wrap');
+    if (featWrap) featWrap.style.display = '';
+    const inner = newsTicker.querySelector('.news-ticker-inner');
+    if (inner) {
+      inner.innerHTML = '';
+      inner.style.transform = 'translateY(0)';
+      regularHTML.forEach(html => {
+        inner.insertAdjacentHTML('beforeend', html);
+      });
+      restartTicker();
+    }
   }
 
   function collapseNews() {
