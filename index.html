@@ -8,8 +8,17 @@
   <link rel="icon" id="siteFavicon" type="image/png" href="imgs/destectic_ico.png">
   <script>
     (function() {
-      var isLab = (location.hostname.indexOf('destectic') !== -1)
-        || (new URLSearchParams(location.search).get('mode') === 'lab');
+      var host = location.hostname;
+      var mode = new URLSearchParams(location.search).get('mode');
+      if (host.indexOf('destectic') !== -1 && mode === 'personal') {
+        location.replace('https://jinmorhee.net/');
+        return;
+      }
+      if (host.indexOf('jinmorhee') !== -1 && mode === 'lab') {
+        location.replace('https://destectic.net/');
+        return;
+      }
+      var isLab = host.indexOf('destectic') !== -1;
       document.documentElement.setAttribute('data-mode', isLab ? 'lab' : 'personal');
       document.documentElement.style.background = isLab ? '#23297a' : '#f9f9f9';
       var fav = document.getElementById('siteFavicon');
@@ -1136,8 +1145,7 @@ The surfaces, despite simple-looking, is the main idea on ident...</p>
   <script>
     (function() {
       var host = window.location.hostname;
-      var params = new URLSearchParams(window.location.search);
-      var isLab = (host.indexOf('destectic') !== -1) || (params.get('mode') === 'lab');
+      var isLab = host.indexOf('destectic') !== -1;
       document.body.setAttribute('data-mode', isLab ? 'lab' : 'personal');
 
       if (isLab) {

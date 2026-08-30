@@ -1026,8 +1026,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function playModeTransition(destHref) {
-    const goingLab = /destectic/i.test(destHref);
+  function playModeTransition(goingLab) {
+    const destHref = goingLab ? 'https://destectic.net/' : 'https://jinmorhee.net/';
     const oldRects = new Map();
     allCards.forEach(card => {
       if (!card.classList.contains('hidden')) {
@@ -1125,7 +1125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       if (document.body.classList.contains('mode-crossing')) return;
       if (typeof closeModal === 'function') closeModal();
-      playModeTransition(modeLink.href);
+      playModeTransition(location.hostname.indexOf('destectic') === -1);
     });
   }
 
