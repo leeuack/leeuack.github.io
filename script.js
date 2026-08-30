@@ -440,8 +440,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dataEl) postData = JSON.parse(dataEl.textContent);
   } catch (e) { console.warn('No post data found'); }
 
+  const POST_ALIASES = {
+    'dms-grasshopper-release': 'dms-grasshopper'
+  };
+
   function getPostIdFromUrl() {
-    const p = new URLSearchParams(window.location.search).get('p');
+    let p = new URLSearchParams(window.location.search).get('p');
+    if (p && POST_ALIASES[p]) p = POST_ALIASES[p];
     return (p && postData[p]) ? p : null;
   }
 
