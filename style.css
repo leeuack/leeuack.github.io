@@ -808,6 +808,11 @@ img { display: block; max-width: 100%; }
   display: block;
 }
 
+.modal-embed iframe {
+  aspect-ratio: 4 / 3;
+  min-height: 420px;
+}
+
 .modal-media-caption {
   font-size: 0.75rem;
   color: #999;

@@ -522,6 +522,22 @@ document.addEventListener('DOMContentLoaded', () => {
           iframe.allowFullscreen = true;
           wrap.appendChild(iframe);
           container.appendChild(wrap);
+        } else if (block.type === 'embed') {
+          const wrap = document.createElement('div');
+          wrap.className = 'modal-media-item modal-embed';
+          const iframe = document.createElement('iframe');
+          iframe.src = block.src;
+          iframe.allow = block.allow || 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; xr-spatial-tracking';
+          iframe.allowFullscreen = true;
+          iframe.setAttribute('scrolling', 'no');
+          wrap.appendChild(iframe);
+          if (block.caption) {
+            const cap = document.createElement('div');
+            cap.className = 'modal-media-caption';
+            cap.textContent = block.caption;
+            wrap.appendChild(cap);
+          }
+          container.appendChild(wrap);
         } else if (block.type === 'image' && block.small && i + 1 < blocks.length && blocks[i + 1].type === 'text') {
           // Small image: side-by-side layout (image left, text right)
           const row = document.createElement('div');
